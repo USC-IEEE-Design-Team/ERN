@@ -42,9 +42,9 @@ def command():
         for pair in recv_data:
             data_as_text += str(pair[0]) + "," + str(pair[1]) + ";"
 
-        print(data_as_text)
+        bytes_rep = data_as_text.encode()
 
-        ser.write(data_as_text)
+        ser.write(bytes_rep)
 
         return "success"
 
