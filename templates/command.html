@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bulma.css')}}">
+    <style>
+      .heading {
+        font-size: 15px;
+      }
+    </style>
+
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.2/mapbox-gl-draw.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.2/mapbox-gl-draw.css" type="text/css"> 
+  </head>
+
+  <body>
+    <div class="container is-fluid">
+      <section class="hero">
+        <div class="hero-body">
+          <nav class="level">
+            <!-- Left side -->
+            <div class="level-left">
+              <div class="level-item">
+                <div class="subtitle" id="mainpageLink">
+                  <p>Emergency Help Network (EHN) - Los Angeles</p>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Right side -->
+            <div class="level-right">
+              <div class="level-item">
+                <span class="tag is-danger">Emergency: Forest Fire</span>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </section>
+
+      <section class= "hero" style="border-top: 2px solid #f5f5f5;">
+        <div class="hero-body">
+
+            <div class="columns">
+                <div class="column">
+                    <div class="heading">
+                        <p>Define Zones</p>
+                    </div>
+
+                    <div id="map" style="height: 400px"></div>
+
+                    <br>
+
+                    <input class="input is-small" id="zone-name" type="text" placeholder="Evacuation zone name">
+                </div>
+
+                <div class="column">
+                    <div class="heading">
+                      <p>Evacuation Zones</p>
+                    </div>
+
+                    <div class="tile is-ancestor">
+                        <div class="tile is-parent is-vertical" id="zone-display-area">
+
+                          <div class="control tile is-child">
+                            <div class="tags has-addons">
+                              <span class="tag is-dark">Evacuation Zone 1</span>
+                              <span class="tag is-danger">Active</span>
+                            </div>
+                          </div>
+
+                          <div class="control tile is-child">
+                            <div class="tags has-addons">
+                              <span class="tag is-dark">Evacuation Zone 2</span>
+                              <span class="tag is-danger">Active</span>
+                            </div>
+                          </div>
+
+                          <template id="zone-template">
+                            <div class="control tile is-child">
+                              <div class="tags has-addons">
+                                <span class="tag is-dark">Evacuation Zone 2</span>
+                                <span class="tag is-danger">Active</span>
+                              </div>
+                            </div>
+                          </template>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+      </section>
+
+
+    </div>
+    <script>
+        mapboxgl.accessToken = "pk.eyJ1IjoibWljYWgxNzExIiwiYSI6ImNqYWFhNG1zYTBxNzEycWxpdDVnZXgyM2MifQ.xdNmEXyKRDha3SMFy30Vdg";
+
+        document.getElementById("mainpageLink").addEventListener("click", () => {
+            window.location.href = "/";
+        });
+
+        var start_lat = 34.026213;
+        var start_lng = -118.2877316;
+
+        const map = new mapboxgl.Map({
+            container: 'map', // container ID
+            style: 'mapbox://styles/mapbox/satellite-v9', // style URL
+            center: [start_lng, start_lat], // starting position [lng, lat]
+            zoom: 9 // starting zoom
+        });
+
+        // const nav = new mapboxgl.NavigationControl({
+        //     showZoom: true,
+        //     showCompass: true,
+        //     visualizePitch: true
+        // });
+        
+        // map.addControl(nav, 'bottom-right');
+
+        // drawing polygon on map
+        const draw = new MapboxDraw({
+            
+            displayControlsDefault: false,
+            // Select which mapbox-gl-draw control buttons to add to the map.
+            controls: {
+                polygon: true,
+                trash: true
+            },
+
+            // Set mapbox-gl-draw to draw by default.
+            // The user does not have to click the polygon control button first.
+            defaultMode: 'draw_polygon'
+        });
+        
+        map.addControl(draw);
+
+        map.on('draw.create', createPolygon);
+        map.on('draw.delete', createPolygon);
+        map.on('draw.update', createPolygon);
+
+        function stringToHTML (str) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(str, 'text/html');
+          return doc.body.innerHTML;
+        };
+
+        function createPolygon(e) {
+            const data = draw.getAll();
+
+            const coordinates = data['features'][0]['geometry']['coordinates'][0];
+            
+            var zoneName = document.getElementById("zone-name").value;
+
+            var zoneDisplayArea = document.getElementById("zone-display-area");
+
+            var temp = document.getElementById("zone-template");
+
+            var clone = temp.content.cloneNode(true);
+
+            var tag = clone.querySelectorAll(".tag");
+
+            tag[0].textContent = zoneName;
+
+            zoneDisplayArea.appendChild(clone);
+        }
+    </script>
+  </body>
+</html>
