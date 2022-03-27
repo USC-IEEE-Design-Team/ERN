@@ -40,7 +40,7 @@ def command():
         data_as_text = ""
 
         for pair in recv_data:
-            data_as_text += pair[0] + "," + pair[1] + ";"
+            data_as_text += str(pair[0]) + "," + str(pair[1]) + ";"
 
         print(data_as_text)
 
