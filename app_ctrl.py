@@ -37,12 +37,16 @@ def command():
     elif request.method == 'POST':
         recv_data = request.json
 
-        print(recv_data)
+        data_as_text = ""
 
-        data_in_text = ""
+        for pair in recv_data:
+            data_as_text += pair[0] + "," pair[1] + ";"
 
-        # for location_pair in recv_data:
-        # send out an alert with the data
+        print(data_as_text)
+        
+        ser.write(data_as_text)
+
+        return "success"
 
 if __name__ == '__main__':
     app.run(debug=True)
