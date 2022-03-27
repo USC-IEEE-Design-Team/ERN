@@ -168,6 +168,14 @@
             tag[0].textContent = zoneName;
 
             zoneDisplayArea.appendChild(clone);
+
+
+            // send zone coordinates to backend
+            var xmlhttp = new XMLHttpRequest();
+            var endpoint = "/command";
+            xmlhttp.open("POST", endpoint);
+            xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xmlhttp.send(JSON.stringify(coordinate));
         }
     </script>
   </body>
